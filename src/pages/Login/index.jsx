@@ -2,34 +2,29 @@ import {
   LockOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Alert,  Tabs } from 'antd';
-import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import React from 'react';
 import ProForm, {  ProFormText } from '@ant-design/pro-form';
-import { useIntl,connect, FormattedMessage } from 'umi';
+import { connect, FormattedMessage ,history} from 'umi';
 import styles from './index.less';
+import { useEffect } from 'react';
 
-const LoginMessage = ({ content }) => (
-  <Alert
-    style={{
-      marginBottom: 24,
-    }}
-    message={content}
-    type="error"
-    showIcon
-  />
-);
+
 
 const Login = (props) => {
-  const { userLogin = {}, submitting } = props;
-  const { status, type: loginType } = userLogin;
-  const [type, setType] = useState('account');
-  const intl = useIntl();
+  useEffect(()=>{
+    // 如果已经登陆过，直接去首页
+    const userInfo = localStorage.getItem('userInfo');
+    if(userInfo) history.replace('/')
+  },[])
+  const { submitting } = props;
 
   const handleSubmit = (values) => {
     const { dispatch } = props;
     dispatch({
+      // 调用model里面login命名空间的login方法
       type: 'login/login',
-      payload: { ...values, type },
+      payload: { ...values },
     });
   };
 
@@ -49,49 +44,42 @@ const Login = (props) => {
             },
           },
         }}
+
+        // 这里可以收到表单提交的数据
         onFinish={(values) => {
+          // console.log(values)
           handleSubmit(values);
           return Promise.resolve();
         }}
       >
-        <Tabs activeKey={type} onChange={setType}>
+        <Tabs activeKey='account' >
           <Tabs.TabPane
             key="account"
-            tab={intl.formatMessage({
-              id: 'pages.login.accountLogin.tab',
-              defaultMessage: 'Account password login',
-            })}
+            tab="账户密码登录"
           />
           </Tabs>
 
-        {status === 'error'  && !submitting && (
-          <LoginMessage
-            content={intl.formatMessage({
-              id: 'pages.login.accountLogin.errorMessage',
-              defaultMessage: 'Incorrect account or password（admin/ant.design)',
-            })}
-          />
-        )}
-
             <ProFormText
-              name="userName"
+              name="email"
               fieldProps={{
                 size: 'large',
                 prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.username.placeholder',
-                defaultMessage: 'Username: admin or user',
-              })}
+              placeholder ='邮箱:super@a.com'
+
               rules={[
                 {
                   required: true,
                   message: (
                     <FormattedMessage
                       id="pages.login.username.required"
-                      defaultMessage="Please enter user name!"
+                      defaultMessage="请输入邮箱"
                     />
                   ),
+                },
+                {
+                  type: 'email',
+                  message: "请输入正确邮箱格式"
                 },
               ]}
             />
@@ -101,10 +89,8 @@ const Login = (props) => {
                 size: 'large',
                 prefix: <LockOutlined className={styles.prefixIcon} />,
               }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.password.placeholder',
-                defaultMessage: 'Password: ant.design',
-              })}
+              placeholder = 'Password: 123123'
+            
               rules={[
                 {
                   required: true,

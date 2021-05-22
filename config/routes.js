@@ -23,7 +23,14 @@ export default [
             component: '../layouts/BasicLayout',
             routes: [
               {
-                path: '/',
+                path:'/',
+                redirect:'/dashboard'
+              },
+              {
+                path: '/dashboard',
+                icon: 'PieChartOutlined',
+                name:'dashboard',
+                component: '@/pages/DashBoard'
               },
               {
                 component: './404',

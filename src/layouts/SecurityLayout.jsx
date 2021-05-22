@@ -15,6 +15,7 @@ class SecurityLayout extends React.Component {
     const { dispatch } = this.props;
 
     if (dispatch) {
+      // 获取当前用户信息
       dispatch({
         type: 'user/fetchCurrent',
       });
@@ -25,8 +26,9 @@ class SecurityLayout extends React.Component {
     const { isReady } = this.state;
     const { children, loading, currentUser } = this.props; // You can replace it to your authentication rule (such as check token exists)
     // You can replace it with your own login authentication rules (such as judging whether the token exists)
+    // 这个props是从model里面获取
 
-    const isLogin = currentUser && currentUser.userid;
+    const isLogin = currentUser && currentUser.id;
     const queryString = stringify({
       redirect: window.location.href,
     });
@@ -35,8 +37,8 @@ class SecurityLayout extends React.Component {
       return <PageLoading />;
     }
 
-    if (!isLogin && window.location.pathname !== '/user/login') {
-      return <Redirect to={`/user/login?${queryString}`} />;
+    if (!isLogin && window.location.pathname !== '/login') {
+      return <Redirect to={`/login?${queryString}`} />;
     }
 
     return children;
